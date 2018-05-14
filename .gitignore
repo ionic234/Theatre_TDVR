@@ -12,12 +12,12 @@
 sysinfo.txt
 # Unity3D generated meta files
 *.pidb.meta
-Theatre TDVR/Assets/HTC.UnityPlugin/*
-Theatre TDVR/Assets/PostProcessing/*
-Theatre TDVR/Assets/ProCore/*
-Theatre TDVR/Assets/SteamVR/*
-Theatre TDVR/Assets/ViveMediaDecoder/*
-Theatre TDVR/Assets/Vive-Teleporter/*
+Assets/HTC.UnityPlugin/*
+Assets/PostProcessing/*
+Assets/ProCore/*
+Assets/SteamVR/*
+Assets/ViveMediaDecoder/*
+Assets/Vive-Teleporter/*
 
 ###
 # VS/MD solution and project files
