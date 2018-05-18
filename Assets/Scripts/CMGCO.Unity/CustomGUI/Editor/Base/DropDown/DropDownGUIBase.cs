@@ -6,68 +6,66 @@ using UnityEngine;
 using System.Linq;
 
 
-namespace CMGCO.Unity.CustomGUI.Base{
+namespace CMGCO.Unity.CustomGUI.Base
+{
 
-	[ExecuteInEditMode]
+    [ExecuteInEditMode]
 
-	abstract public class DropDownGUIBase<DataIDType, DataValueType> : CustomGUIBase<DataIDType, DataValueType> 
-		//where DataIDType : struct,  IComparable, IFormattable, IConvertible
-	{
-		protected abstract  Dictionary<DataIDType, DropDownItem<DataValueType>> _dropDownDictionary{get;} 
-		protected string[] dropDownLabels;
-		protected DataValueType[] dropDownValues;  
+    abstract public class DropDownGUIBase<DataIDType, DataValueType> : CustomGUIBase<DataIDType, DataValueType>
+    //where DataIDType : struct,  IComparable, IFormattable, IConvertible
+    {
+        protected abstract Dictionary<DataIDType, DropDownItem<DataValueType>> _dropDownDictionary { get; }
+        protected string[] dropDownLabels;
+        protected DataValueType[] dropDownValues;
 
-		protected DropDownGUIBase(){
+        protected DropDownGUIBase()
+        {
 
-			if ( !typeof(DataIDType).IsEnum){
-				throw new Exception("DropDownGUIBase: DataIDType must be an Enum");
-			}
+            if (!typeof(DataIDType).IsEnum)
+            {
+                throw new Exception("DropDownGUIBase: DataIDType must be an Enum");
+            }
 
-			if (this._dropDownDictionary.Count() == 0){
-				throw new Exception("DropDownGUIBase: dropDownDictionary cannot be empty");
-			}
+            if (this._dropDownDictionary.Count() == 0)
+            {
+                throw new Exception("DropDownGUIBase: dropDownDictionary cannot be empty");
+            }
 
-			this.dropDownLabels =  this._dropDownDictionary.Select(x => x.Value.itemLabel).ToArray();
-			this.dropDownValues = this._dropDownDictionary.Select(x => x.Value.itemValue).ToArray(); 
-		}
-		public CustomGUIResult<DataIDType, DataValueType> getDropDownResultFromValue(DataValueType value){					
-			KeyValuePair<DataIDType, DropDownItem<DataValueType>> dictionaryKeyValue = this._dropDownDictionary.FirstOrDefault( x => x.Value.itemValue.Equals(value)); 	
-			if (dictionaryKeyValue.Value != null){
-				return new CustomGUIResult<DataIDType, DataValueType>(dictionaryKeyValue.Key, dictionaryKeyValue.Value.itemValue);	
-			}else{
-				// If value is not found it will give us back the first id, so also get the first value. 
-				return new CustomGUIResult<DataIDType, DataValueType>(dictionaryKeyValue.Key, this.dropDownValues[0]);
-			}
-		} 
-		
-		protected override CustomGUIResult<DataIDType, DataValueType>  drawGUIControlBody(CustomGUIResult<DataIDType, DataValueType> currentDropDownResult, string lableString ){
+            this.dropDownLabels = this._dropDownDictionary.Select(x => x.Value.itemLabel).ToArray();
+            this.dropDownValues = this._dropDownDictionary.Select(x => x.Value.itemValue).ToArray();
+        }
+        public CustomGUIResult<DataIDType, DataValueType> getDropDownResultFromValue(DataValueType value)
+        {
+            KeyValuePair<DataIDType, DropDownItem<DataValueType>> dictionaryKeyValue = this._dropDownDictionary.FirstOrDefault(x => x.Value.itemValue.Equals(value));
+            if (dictionaryKeyValue.Value != null)
+            {
+                return new CustomGUIResult<DataIDType, DataValueType>(dictionaryKeyValue.Key, dictionaryKeyValue.Value.itemValue);
+            }
+            else
+            {
+                // If value is not found it will give us back the first id, so also get the first value. 
 
-			// Very messy to get round c# non support of generic Enums	
-			
-			GUILayout.Label(lableString);
-			int selectedInt = EditorGUILayout.Popup(
-				(int)Convert.ChangeType(currentDropDownResult.resultID, Enum.GetUnderlyingType(currentDropDownResult.resultID.GetType())),
-				this.dropDownLabels
-			);
+                // CHANGE THIS TO ASK CALL GET DEFALT FUNCTION
 
-			return new CustomGUIResult<DataIDType, DataValueType>((DataIDType)Enum.Parse(typeof(DataIDType), selectedInt.ToString(), true), this.dropDownValues[selectedInt]);
-		}
-	
-	} 	
+                return new CustomGUIResult<DataIDType, DataValueType>(dictionaryKeyValue.Key, this.dropDownValues[0]);
+            }
+        }
 
+        protected override CustomGUIResult<DataIDType, DataValueType> drawGUIControlBody(CustomGUIResult<DataIDType, DataValueType> currentDropDownResult, string lableString)
+        {
 
+            // Very messy to get round c# non support of generic Enums	
 
+            GUILayout.Label(lableString);
+            int selectedInt = EditorGUILayout.Popup(
+                (int)Convert.ChangeType(currentDropDownResult.resultID, Enum.GetUnderlyingType(currentDropDownResult.resultID.GetType())),
+                this.dropDownLabels
+            );
 
+            return new CustomGUIResult<DataIDType, DataValueType>((DataIDType)Enum.Parse(typeof(DataIDType), selectedInt.ToString(), true), this.dropDownValues[selectedInt]);
+        }
 
-
-
-
-
-
-
-
-
-
+    }
 
 
 
@@ -82,22 +80,36 @@ namespace CMGCO.Unity.CustomGUI.Base{
 
 
 
-		/*	
-		abstract public DropDownGUIBase<DataIDType, DataValueType>
-
-		public string testData = "Inside Drop Down GUI Base";
-		public string testData2 = "Base is smelly";
-
-		public virtual void printVars(){
-			
-			Debug.Log(_instance);
-			Debug.Log(testData);
-			Debug.Log(testData2);
-		}
-		*/
 
 
-	/* 
+
+
+
+
+
+
+
+
+
+
+
+
+    /*	
+    abstract public DropDownGUIBase<DataIDType, DataValueType>
+
+    public string testData = "Inside Drop Down GUI Base";
+    public string testData2 = "Base is smelly";
+
+    public virtual void printVars(){
+
+        Debug.Log(_instance);
+        Debug.Log(testData);
+        Debug.Log(testData2);
+    }
+    */
+
+
+    /* 
 	public abstract class DropDownGUIBase<DataIDType, DataValueType> : Editor {
 
 		

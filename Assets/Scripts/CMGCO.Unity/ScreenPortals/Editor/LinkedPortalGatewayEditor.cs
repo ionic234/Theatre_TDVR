@@ -33,27 +33,59 @@ namespace CMGCO.Unity.ScreenPortals
         private CustomGUIResult<int, GameObject> exitPortalResult = new CustomGUIResult<int, GameObject>(0, null);
         private LinkedPortalGateway exitPortalScript;
 
+        private CustomGUIResult<AspectRatioIDs, Vector2> aspectRatioResult;
 
+        private CustomGUIResult<WidthHeightAnchors, Vector2> screenSizeResult;
 
-
+        private float cameraFOV;
 
         private void OnEnable()
         {
+
+
             // Get the editors target 
             this.myLinkedPortalGateway = (LinkedPortalGateway)target;
+
+            // Need to check that we havn't become dissasosiated from our exitPortal or we're connected to a portal we shouldnt be.
+            // This can happen when undoing the removal of the linkedPortalGateway compoenent or when cloning a portal that is already linked
+            if (this.myLinkedPortalGateway.exitPortalScript)
+            {
+                // We have an exit portal script. 
+                if (this.myLinkedPortalGateway.exitPortalScript.exitPortalScript == null)
+                {
+                    // It hads forgotten us set it back up 
+                    Debug.Log("Reistablist link");
+                    this.myLinkedPortalGateway.setExitPortal(this.myLinkedPortalGateway._exitPortal, true);
+                    this.myLinkedPortalGateway.giveLinkedProperties();
+                }
+                else if (!this.myLinkedPortalGateway.exitPortalScript.exitPortalScript.Equals(this.myLinkedPortalGateway))
+                {
+                    // We are a clone. Clear our exit portal
+                    Debug.Log("CLEAR FROM CLONE");
+                    this.myLinkedPortalGateway.clearExitPortal(false);
+                }
+            }
         }
 
         private void getPropertiesFromSerializedObject()
         {
             // Get the serialized Exit Portal
             this.exitPortalResult.resultValue = (GameObject)serializedObject.FindProperty("exitPortal").objectReferenceValue;
+            this.exitPortalScript = this.exitPortalResult.resultValue ? this.myLinkedPortalGateway._exitPortal.GetComponent<LinkedPortalGateway>() : null;
+
             if (this.exitPortalResult.resultValue)
             {
-                this.exitPortalScript = this.exitPortalResult.resultValue.GetComponent<LinkedPortalGateway>();
+                // Get the values now we know were set up for it 
+                Vector2 serializedRatioValue = (Vector2)serializedObject.FindProperty("screenRatio").vector2Value;
+                this.aspectRatioResult = AspectRatioGUI._instance.getDropDownResultFromValue(serializedRatioValue);
+
+                Vector2 serializedScreenSizeValue = (Vector2)serializedObject.FindProperty("screenSize").vector2Value;
+                this.screenSizeResult = new CustomGUIResult<WidthHeightAnchors, Vector2>((WidthHeightAnchors)0, serializedScreenSizeValue);
+
+                this.cameraFOV = (float)serializedObject.FindProperty("targetFOV").floatValue;
+
             }
-
         }
-
 
         public override void OnInspectorGUI()
         {
@@ -78,8 +110,8 @@ namespace CMGCO.Unity.ScreenPortals
             {
                 EditorGUILayout.LabelField("Linked Properties", EditorStyles.boldLabel);
                 this.drawRatioDropDown();
-                //this.drawWidthHeight();
-                //this.drawTargetFOV();
+                this.drawWidthHeight();
+                this.drawTargetFOV();
                 EditorGUILayout.Separator();
                 EditorGUILayout.LabelField("Own Properties", EditorStyles.boldLabel);
                 this.drawExitPortalInput();
@@ -94,88 +126,218 @@ namespace CMGCO.Unity.ScreenPortals
 
         private void drawExitPortalInput()
         {
-            GameObject previousExitPortal = this.exitPortalResult.resultValue;
             this.exitPortalResult = ExitPortalGUI._instance.drawGUIControl(this.exitPortalResult, "Exit Portal", this.myLinkedPortalGateway.gameObject, ExitPortalGUI.validationArray);
-
-            if (this.exitPortalResult.resultValue != previousExitPortal)
+            if (this.exitPortalResult.resultValue != this.myLinkedPortalGateway._exitPortal)
             {
-                int group = Undo.GetCurrentGroup();
-                LinkedPortalGateway[] recordObject; // store reference to every object that chagnes due to this action. 
-                LinkedPortalGateway resultScript = this.exitPortalResult.resultValue ? this.exitPortalResult.resultValue.GetComponent<LinkedPortalGateway>() : null;
-                LinkedPortalGateway previousScript = previousExitPortal ? previousExitPortal.GetComponent<LinkedPortalGateway>() : null;
-                string undoName = "";
                 if (this.exitPortalResult.resultValue)
                 {
-                    undoName = "Set Exit Portal";
-                    if (previousExitPortal)
-                    {
-                        recordObject = new LinkedPortalGateway[] { this.myLinkedPortalGateway, previousScript, resultScript };
-                    }
-                    else
-                    {
-                        recordObject = new LinkedPortalGateway[] { this.myLinkedPortalGateway, resultScript };
-                    }
+                    this.setExitPortal();
                 }
                 else
                 {
-                    undoName = "Clear Exit Portal";
-                    recordObject = new LinkedPortalGateway[] { this.myLinkedPortalGateway, previousScript };
+                    this.clearExitPortal();
                 }
+                this.hasChanged = true;
+            }
+        }
 
+        private void clearExitPortal()
+        {
+
+            int group = Undo.GetCurrentGroup();
+            string undoName = "Clear Exit Portal";
+            Undo.SetCurrentGroupName(undoName);
+            LinkedPortalGateway[] recordObject = this.exitPortalScript ? new LinkedPortalGateway[] { this.myLinkedPortalGateway, this.exitPortalScript } : new LinkedPortalGateway[] { this.myLinkedPortalGateway };
+            Undo.RecordObjects(recordObject, undoName);
+            this.myLinkedPortalGateway.clearExitPortal(true);
+            this.exitPortalScript = null;
+            Undo.CollapseUndoOperations(group);
+        }
+
+        private void setExitPortal()
+        {
+            int group = Undo.GetCurrentGroup();
+            string undoName = "Set Exit Portal";
+            Undo.SetCurrentGroupName(undoName);
+
+            LinkedPortalGateway resultScript = this.exitPortalResult.resultValue.GetComponent<LinkedPortalGateway>();
+            LinkedPortalGateway resultExitPortalScript = resultScript.exitPortalScript; // The exit portal of our new exit portal. Also need to capture this being reset
+
+            LinkedPortalGateway[] recordObject;
+            if (resultExitPortalScript)
+            {
+                recordObject = this.exitPortalScript ? new LinkedPortalGateway[] { this.myLinkedPortalGateway, this.exitPortalScript, resultExitPortalScript, resultScript } : new LinkedPortalGateway[] { this.myLinkedPortalGateway, resultExitPortalScript, resultScript };
+            }
+            else
+            {
+                recordObject = this.exitPortalScript ? new LinkedPortalGateway[] { this.myLinkedPortalGateway, this.exitPortalScript, resultScript } : new LinkedPortalGateway[] { this.myLinkedPortalGateway, resultScript };
+            }
+
+
+
+
+            Undo.RecordObjects(recordObject, undoName);
+            bool resultHasExitPortal = resultScript._exitPortal != null;
+            this.myLinkedPortalGateway._exitPortal = this.exitPortalResult.resultValue;
+
+            if (!resultHasExitPortal || EditorUtility.DisplayDialog("Inherit Properties from?", "Which Portal would you like to inherit the linked properties from?", "This portal", "Exit portal"))
+            {
+                if (!this.exitPortalScript)
+                {
+                    // Set the aspect ratio to the default value 
+                    CustomGUIResult<AspectRatioIDs, Vector2> defaultRatioResult = AspectRatioGUI._instance.getDropDownResultFromValue(this.myLinkedPortalGateway._screenRatio);
+                    this.myLinkedPortalGateway._screenRatio = defaultRatioResult.resultValue;
+                }
+                this.myLinkedPortalGateway.giveLinkedProperties();
+            }
+            else
+            {
+                this.myLinkedPortalGateway.inheritLinkedProperties();
+            }
+            this.exitPortalScript = this.exitPortalResult.resultValue ? this.myLinkedPortalGateway._exitPortal.GetComponent<LinkedPortalGateway>() : null;
+            Undo.CollapseUndoOperations(group);
+        }
+
+        private void drawRatioDropDown()
+        {
+            this.aspectRatioResult = AspectRatioGUI._instance.drawGUIControl(this.aspectRatioResult);
+            if (!this.aspectRatioResult.resultValue.Equals(this.myLinkedPortalGateway._screenRatio))
+            {
+                int group = Undo.GetCurrentGroup();
+                string undoName = "Change Aspect Ratio";
                 Undo.SetCurrentGroupName(undoName);
-                Undo.RecordObjects(recordObject, undoName);
-                this.myLinkedPortalGateway._exitPortal = this.exitPortalResult.resultValue;
+                Undo.RecordObjects(new LinkedPortalGateway[] { this.myLinkedPortalGateway, this.exitPortalScript }, undoName);
+                this.myLinkedPortalGateway._screenRatio = this.aspectRatioResult.resultValue;
+                this.calcScreenSize();
                 Undo.CollapseUndoOperations(group);
 
             }
         }
 
-        private void drawRatioDropDown()
-        {
-            /*
-			// Ratio drop down
-
-            CustomGUIResult<AspectRatioIDs, Vector2> newAspectRatioResult = AspectRatioGUI._instance.drawGUIControl(this.currentAspectRatioResult);
-            //this.currentAspectRatioResult = AspectRatioGUI._instance.drawGUIControl(this.currentAspectRatioResult);
-            //if (this.myLinkedPortalGateway._screenRatio != this.currentAspectRatioResult.resultValue){
-            if (this.myLinkedPortalGateway._screenRatio != newAspectRatioResult.resultValue)
-            {
-
-
-                Debug.Log("SET UNDOzzzr3");
-                Undo.RecordObject(this, "Changed Screen Ratio");
-                this.currentAspectRatioResult = newAspectRatioResult;
-
-                //Undo.RegisterCompleteObjectUndo (this.myLinkedPortalGateway.gameObject, "Changed Screen Ratio");
-                //Undo.RecordObject(this.myLinkedPortalGateway, "Changed Screen Ratio");
-                //Undo.RegisterCompleteObjectUndo
-
-                this.myLinkedPortalGateway._screenRatio = this.currentAspectRatioResult.resultValue;
-
-
-
-                // update the width height 
-                this.calcScreenSize();
-            }
-			*/
-        }
-
-
-        /*	
         private void drawWidthHeight()
         {
-            this.currentScreenSizeResult = AnchoredWidthHeightGUI._instance.drawGUIControl(this.currentScreenSizeResult);
-            if (!this.currentScreenSizeResult.resultValue.Equals(this.myLinkedPortalGateway._screenSize))
+            this.screenSizeResult = AnchoredWidthHeightGUI._instance.drawGUIControl(this.screenSizeResult);
+            if (!this.screenSizeResult.resultValue.Equals(this.myLinkedPortalGateway._screenSize))
             {
                 // it has changed
+                int group = Undo.GetCurrentGroup();
+                string undoName = "Change Screen Size";
+                Undo.SetCurrentGroupName(undoName);
+                Undo.RecordObjects(new LinkedPortalGateway[] { this.myLinkedPortalGateway, this.exitPortalScript }, undoName);
                 this.calcScreenSize();
+                Undo.CollapseUndoOperations(group);
             }
         }
-		*/
+
+        private void calcScreenSize()
+        {
+            this.screenSizeResult.resultValue = this.myLinkedPortalGateway.calcScreenSize(this.screenSizeResult.resultValue, this.screenSizeResult.resultID == (WidthHeightAnchors)0);
+            // Need to work out how this will change the box collider and how that will get called again on undo / redo
+        }
+
+        private void drawTargetFOV()
+        {
+            GUILayout.BeginHorizontal();
+            this.cameraFOV = EditorGUILayout.FloatField("Target FOV", this.cameraFOV);
+            if (this.cameraFOV != this.myLinkedPortalGateway._targetFOV)
+            {
+                int group = Undo.GetCurrentGroup();
+                string undoName = "Change FOV";
+                Undo.SetCurrentGroupName(undoName);
+                Undo.RecordObjects(new LinkedPortalGateway[] { this.myLinkedPortalGateway, this.exitPortalScript }, undoName);
+                this.myLinkedPortalGateway._targetFOV = this.cameraFOV;
+                Undo.CollapseUndoOperations(group);
+            }
+            GUILayout.EndHorizontal();
+        }
+
+
+
+
+
+        /*
+
+
+                    
+        private void drawIsVisible(){
+            GUILayout.BeginHorizontal();
+            this.currentIsVisible = EditorGUILayout.Toggle("Is Visible", this.currentIsVisible);
+            if (this.currentIsVisible != this.myLinkedPortalGateway._isVisible){
+                this.myLinkedPortalGateway._isVisible = this.currentIsVisible;
+            }
+            GUILayout.EndHorizontal();	
+        }
+
+
+                private void drawCollisionTargets(){
+            SerializedProperty transitionObjectsWhiltelist = serializedObject.FindProperty("transitionObjectsWhiltelist");
+            bool hasChanged = false;
+            GameObject obj;
+
+            if (EditorGUILayout.PropertyField(transitionObjectsWhiltelist,new GUIContent("Transition Object Whitelist ("  + this.currentTransitionObjectsWhitelist.Count + ")") ,false)){
+
+                if (transitionObjectsWhiltelist.arraySize > this.currentTransitionObjectsWhitelist.Count){
+                    SerializedProperty myElement = transitionObjectsWhiltelist.GetArrayElementAtIndex(transitionObjectsWhiltelist.arraySize -1);
+                    obj = myElement.objectReferenceValue as GameObject;
+                    this.currentTransitionObjectsWhitelist.Add(obj);
+                    hasChanged = true;
+                }else{
+                    EditorGUI.indentLevel++;
+
+                    for (int i =0; i < this.currentTransitionObjectsWhitelist.Count; i++){
+                        GUILayout.BeginHorizontal();
+                        obj = EditorGUILayout.ObjectField("Element " + i, this.currentTransitionObjectsWhitelist[i], typeof(GameObject), true) as GameObject; 
+
+                        if (obj != this.currentTransitionObjectsWhitelist[i]){
+                            this.currentTransitionObjectsWhitelist[i] = obj;
+                            hasChanged = true;
+                        }
+
+
+                        if (GUILayout.Button("X",EditorStyles.miniButton, GUILayout.Width(20))){
+                            this.currentTransitionObjectsWhitelist[i] = null;
+                            hasChanged = true;
+                        }						
+                        GUILayout.EndHorizontal();
+                    }
+
+                    EditorGUI.indentLevel--;
+
+                }; 		
+
+                if(hasChanged){
+
+                    // Ok this is bad. Need to fix this later. 
+                    LinkedPortalGateway.transitionWhiltelistValidationResponce responce = this.myLinkedPortalGateway.validateTransitionObjectsWhiltelist(this.currentTransitionObjectsWhitelist);	
+                    switch(responce){
+                        case LinkedPortalGateway.transitionWhiltelistValidationResponce.NOMESH:
+                            EditorUtility.DisplayDialog("Invalid Object",  "Objects on the Whitelist must contrain a MeshRenderer", "OK");
+                        break;
+                        case LinkedPortalGateway.transitionWhiltelistValidationResponce.REPEATED:
+                            EditorUtility.DisplayDialog("Invalid Object",  "Objects can only be on the Whitelist once", "OK");
+                        break;
+                    }						
+                    this.currentTransitionObjectsWhitelist = this.myLinkedPortalGateway._transitionObjectsWhiltelist;
+
+                }
+            };
+        }
+
+
+
+        
+        
+         */
+
+
+
 
 
     }
 }
+
+
+
 
 /* 
 private void drawExitPortalInput()

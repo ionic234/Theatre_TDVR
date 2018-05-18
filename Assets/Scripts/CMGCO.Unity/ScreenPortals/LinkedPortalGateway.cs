@@ -40,7 +40,7 @@ namespace CMGCO.Unity.ScreenPortals
         public LinkedPortalGateway exitPortalScript;
 
         [SerializeField]
-        private Vector2 screenRatio = new Vector2(0, 0);
+        private Vector2 screenRatio;
         public Vector2 _screenRatio
         {
             get
@@ -152,8 +152,20 @@ namespace CMGCO.Unity.ScreenPortals
             }
         }
 
-        public void clearExitPortal()
+        public void clearExitPortal(bool isPropigate = false, bool isResetToDefault = true)
         {
+            if (isResetToDefault)
+            {
+                this.setScreenRatio(new Vector2(), isPropigate);
+                this.setScreenSize(new Vector2(1, 1), isPropigate);
+                this.setTargetFOV(60, isPropigate);
+            }
+
+            if (isPropigate)
+            {
+                // Reset linked values; 
+                this.exitPortalScript.clearExitPortal(false, false);
+            }
             this.exitPortal = null;
             this.exitPortalScript = null;
         }
