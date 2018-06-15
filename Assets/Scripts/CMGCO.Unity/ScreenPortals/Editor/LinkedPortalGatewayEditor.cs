@@ -1,22 +1,13 @@
 ﻿using UnityEditor;
-
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
-using System.Linq;
 
 using CMGCO.Unity.CustomGUI.Base;
 using CMGCO.Unity.CustomGUI.AspectRatio;
-using CMGCO.Unity.CustomGUI.ExitPortal;
 using CMGCO.Unity.CustomGUI.AnchoredWidthHeight;
 
-using System.Reflection;
 
 namespace CMGCO.Unity.ScreenPortals
 {
-
 
     [ExecuteInEditMode]
     [CustomEditor(typeof(LinkedPortalGateway))]
@@ -38,6 +29,10 @@ namespace CMGCO.Unity.ScreenPortals
         private CustomGUIResult<WidthHeightAnchors, Vector2> screenSizeResult;
 
         private float cameraFOV;
+
+        private bool isVisible;
+
+        private SerializedProperty serializedTransitionObjectsWhiteList;
 
         private void OnEnable()
         {
@@ -83,6 +78,9 @@ namespace CMGCO.Unity.ScreenPortals
                 this.screenSizeResult = new CustomGUIResult<WidthHeightAnchors, Vector2>((WidthHeightAnchors)0, serializedScreenSizeValue);
 
                 this.cameraFOV = (float)serializedObject.FindProperty("targetFOV").floatValue;
+                this.isVisible = (bool)serializedObject.FindProperty("isVisible").boolValue;
+
+                this.serializedTransitionObjectsWhiteList = serializedObject.FindProperty("transitionObjectsWhiltelist");
 
             }
         }
@@ -115,18 +113,17 @@ namespace CMGCO.Unity.ScreenPortals
                 EditorGUILayout.Separator();
                 EditorGUILayout.LabelField("Own Properties", EditorStyles.boldLabel);
                 this.drawExitPortalInput();
-                //this.drawCollisionTargets();
-                //this.drawIsVisible();
+                this.drawCollisionTargets();
+                this.drawIsVisible();
             }
             serializedObject.ApplyModifiedProperties();
             GUILayout.Space(50);
             base.OnInspectorGUI();
         }
-
-
         private void drawExitPortalInput()
         {
             this.exitPortalResult = ExitPortalGUI._instance.drawGUIControl(this.exitPortalResult, "Exit Portal", this.myLinkedPortalGateway.gameObject, ExitPortalGUI.validationArray);
+
             if (this.exitPortalResult.resultValue != this.myLinkedPortalGateway._exitPortal)
             {
                 if (this.exitPortalResult.resultValue)
@@ -143,7 +140,6 @@ namespace CMGCO.Unity.ScreenPortals
 
         private void clearExitPortal()
         {
-
             int group = Undo.GetCurrentGroup();
             string undoName = "Clear Exit Portal";
             Undo.SetCurrentGroupName(undoName);
@@ -251,14 +247,104 @@ namespace CMGCO.Unity.ScreenPortals
             GUILayout.EndHorizontal();
         }
 
+        private void drawIsVisible()
+        {
+            this.isVisible = EditorGUILayout.Toggle("Is Visible", this.isVisible);
+            if (this.isVisible != this.myLinkedPortalGateway._isVisible)
+            {
+                Undo.RegisterCompleteObjectUndo(this.myLinkedPortalGateway, "Toggle Is Visible");
+                this.myLinkedPortalGateway._isVisible = this.isVisible;
+            }
+        }
 
+
+        private void drawCollisionTargets()
+        {
+
+
+            // most of this should move to
+            //CustomGUIResult<ResultType, List<GameObject>> listResult =
+
+            if (this.serializedTransitionObjectsWhiteList.isArray)
+            {
+                int objCount = this.serializedTransitionObjectsWhiteList.arraySize;
+                string label = "Transition Object Whitelist (" + objCount + ")";
+                CustomGUIResult<ResultType, SerializedProperty> whilteListResult = TransitionObjectListGUI._instance.drawGUIControl(
+                    new CustomGUIResult<ResultType, SerializedProperty>(ResultType.NO_CHANGE, this.serializedTransitionObjectsWhiteList),
+                    label,
+                    this.myLinkedPortalGateway.gameObject,
+                    ExitPortalGUI.validationArray // This isn't right;
+                );
+            }
+            else
+            {
+                Debug.LogError("serializedTransitionObjectsWhiteList is not an array");
+            }
+
+
+            // ObjectPickerListGUIBase._instance.drawGUIControl(new CustomGUIResult<ResultType, SerializedProperty>(ResultType.NO_CHANGE, this.serializedTransitionObjectsWhiteList), ");
+
+            if (this.serializedTransitionObjectsWhiteList.isArray)
+            {
+
+
+                // int objCount = this.serializedTransitionObjectsWhiteList.arraySize;
+                // if (EditorGUILayout.PropertyField(this.serializedTransitionObjectsWhiteList, new GUIContent("Transition Object Whitelist (" + objCount + ")"), false))
+                // {
+
+                //     Debug.Log(objCount + ":" + this.serializedTransitionObjectsWhiteList.arraySize);
+                //     if (objCount > this.serializedTransitionObjectsWhiteList.arraySize)
+                //     {
+
+
+                //     }
+                //     else
+                //     {
+
+                //     }
+
+
+
+
+
+                //     EditorGUI.indentLevel++;
+                //     GameObject obj;
+                //     for (var i = 0; i < objCount; i++)
+                //     {
+                //         obj = (GameObject)this.serializedTransitionObjectsWhiteList.GetArrayElementAtIndex(i).objectReferenceValue;
+                //         CustomGUIResult<int, GameObject> result = TransitionObjectGUI._instance.drawGUIControl(new CustomGUIResult<int, GameObject>(i, obj), obj.name, this.myLinkedPortalGateway.gameObject, TransitionObjectGUI.validationArray);
+                //         if (result.resultValue != obj)
+                //         {
+                //             Debug.Log("come get some");
+                //             if (this.exitPortalResult.resultValue)
+                //             {
+                //                 // Set collision Target
+
+
+                //             }
+                //             else
+                //             {
+                //                 // Remove Collision Target
+
+
+
+                //             }
+                //         }
+                //         Debug.Log(result);
+
+                //     }
+                //     EditorGUI.indentLevel--;
+
+                // }
+            }
+        }
 
 
 
         /*
 
 
-                    
+
         private void drawIsVisible(){
             GUILayout.BeginHorizontal();
             this.currentIsVisible = EditorGUILayout.Toggle("Is Visible", this.currentIsVisible);
@@ -325,8 +411,8 @@ namespace CMGCO.Unity.ScreenPortals
 
 
 
-        
-        
+
+
          */
 
 

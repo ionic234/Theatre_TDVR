@@ -99,6 +99,8 @@ namespace CMGCO.Unity.ScreenPortals
         }
         private List<MeshRenderer> transitionMeshesWhiltelist;
 
+
+        [SerializeField]
         private bool isVisible = false;
         public bool _isVisible
         {
@@ -220,6 +222,11 @@ namespace CMGCO.Unity.ScreenPortals
 
         public transitionWhiltelistValidationResponce validateTransitionObjectsWhiltelist(List<GameObject> newTransitionObjectsWhiltelist)
         {
+
+            // should this even be here?
+
+
+            Debug.Log("Helllo");
 
             // While it is possible for the list to be rejected for multiple reasons we will only return one because its only in the editor (where only one is possible) that errors are reported
 
