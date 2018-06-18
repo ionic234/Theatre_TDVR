@@ -107,13 +107,13 @@ namespace CMGCO.Unity.ScreenPortals
             else
             {
                 EditorGUILayout.LabelField("Linked Properties", EditorStyles.boldLabel);
-                this.drawRatioDropDown();
+                //this.drawRatioDropDown();
                 this.drawWidthHeight();
                 this.drawTargetFOV();
                 EditorGUILayout.Separator();
                 EditorGUILayout.LabelField("Own Properties", EditorStyles.boldLabel);
                 this.drawExitPortalInput();
-                this.drawCollisionTargets();
+                //this.drawCollisionTargets();
                 this.drawIsVisible();
             }
             serializedObject.ApplyModifiedProperties();
@@ -207,11 +207,61 @@ namespace CMGCO.Unity.ScreenPortals
                 this.calcScreenSize();
                 Undo.CollapseUndoOperations(group);
 
+
+
             }
         }
 
         private void drawWidthHeight()
         {
+            var accumulativeX = 0f;
+            float charWidth = 16f;
+            var rect = EditorGUILayout.GetControlRect(true, EditorGUIUtility.singleLineHeight);
+
+            var label = new GUIContent("Dimensions");
+            var labelArray = new GUIContent[]{
+                new GUIContent("W"),
+                new GUIContent("H")
+            };
+            var valueArray = new float[]{
+                10f,
+                20f
+            };
+
+            var floatFieldWidth = 0f;
+
+            // Render the label; 
+            EditorGUI.LabelField(new Rect(rect.x, rect.y, EditorGUIUtility.labelWidth, rect.height), label);
+
+            if (EditorGUIUtility.currentViewWidth > 332)
+            {
+                // Normal render
+                accumulativeX = rect.x + EditorGUIUtility.labelWidth;
+                var groupRect = new Rect(rect.x + EditorGUIUtility.labelWidth, rect.y, rect.width - EditorGUIUtility.labelWidth, rect.height);
+                floatFieldWidth = ((groupRect.width - (charWidth * labelArray.Length)) / valueArray.Length);
+                floatFieldWidth = (floatFieldWidth / 100) * 64.8f;
+            }
+            else
+            {
+                // Render on two lines 
+                EditorGUI.LabelField(new Rect(rect.x, rect.y, EditorGUIUtility.labelWidth, rect.height), label);
+                EditorGUI.indentLevel++;
+                rect = EditorGUILayout.GetControlRect(true, EditorGUIUtility.singleLineHeight);
+                rect = EditorGUI.IndentedRect(rect);
+                accumulativeX = rect.x;
+                EditorGUI.indentLevel--;
+                floatFieldWidth = ((rect.width - (charWidth * labelArray.Length)) / valueArray.Length);
+            }
+
+            for (var i = 0; i < labelArray.Length; i++)
+            {
+                EditorGUI.LabelField(new Rect(accumulativeX, rect.y, charWidth, rect.height), new GUIContent(labelArray[i]), i > 0 ? CustomEditorStyles._instance._centerAlign : new GUIStyle());
+                accumulativeX += charWidth;
+                EditorGUI.FloatField(new Rect(accumulativeX, rect.y, floatFieldWidth, rect.height), valueArray[i]);
+                accumulativeX += floatFieldWidth;
+            }
+
+            /* 
             this.screenSizeResult = AnchoredWidthHeightGUI._instance.drawGUIControl(this.screenSizeResult);
             if (!this.screenSizeResult.resultValue.Equals(this.myLinkedPortalGateway._screenSize))
             {
@@ -223,7 +273,13 @@ namespace CMGCO.Unity.ScreenPortals
                 this.calcScreenSize();
                 Undo.CollapseUndoOperations(group);
             }
+            */
+
+
         }
+
+
+
 
         private void calcScreenSize()
         {
