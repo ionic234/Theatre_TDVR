@@ -14,25 +14,39 @@ namespace CMGCO.Unity.CustomGUI.Base
     abstract public class NewCustomGUIBase<CustomGUIResultType>
     {
 
+
         private MethodInfo MyDrawGUIControlBodyMethod;
+        private MethodInfo MyParameterlessDrawGUIControlBodyMethod;
 
         public virtual CustomGUIResultType drawGUIControl(object[] args = null)
         {
             if (this.MyDrawGUIControlBodyMethod == null)
             {
-                this.MyDrawGUIControlBodyMethod = getMyDrawGUIControlBodyMethod();
+                this.getMyDrawGUIControlBodyMethod();
             }
+
             this.drawGUIControlHead();
-            CustomGUIResultType rData = (CustomGUIResultType)this.MyDrawGUIControlBodyMethod.Invoke(this, args != null ? args : new object[] { });
+
+            CustomGUIResultType rData;
+            if (args == null || args.Length == 0)
+            {
+                rData = (CustomGUIResultType)this.MyParameterlessDrawGUIControlBodyMethod.Invoke(this, args != null ? args : new object[] { });
+            }
+            else
+            {
+                rData = (CustomGUIResultType)this.MyDrawGUIControlBodyMethod.Invoke(this, args);
+            }
+
             this.drawGUIControlFooter();
             return (rData);
         }
 
-        private MethodInfo getMyDrawGUIControlBodyMethod()
+        private void getMyDrawGUIControlBodyMethod()
         {
             // Cache the method to call. 
             var myType = this.GetType();
-            return myType.GetMethod("drawGUIControlBody", BindingFlags.NonPublic | BindingFlags.Instance, null, this.getArgumentTypes(), null);
+            this.MyDrawGUIControlBodyMethod = myType.GetMethod("drawGUIControlBody", BindingFlags.NonPublic | BindingFlags.Instance, null, this.getArgumentTypes(), null);
+            this.MyParameterlessDrawGUIControlBodyMethod = myType.GetMethod("drawGUIControlBody", BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { }, null);
         }
 
         protected virtual void drawGUIControlHead()
