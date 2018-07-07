@@ -13,28 +13,37 @@ namespace CMGCO.Unity.CustomGUI.Base
 
     abstract public class NewCustomGUIBase<CustomGUIResultType>
     {
-        public virtual CustomGUIResultType drawGUIControl(Type[] argumentTypes = null, object[] args = null)
-        {
-            if (argumentTypes == null)
-            {
-                argumentTypes = new Type[] { };
-            }
-            if (args == null)
-            {
-                args = new object[] { };
-            }
 
+        private MethodInfo MyDrawGUIControlBodyMethod;
+
+        public virtual CustomGUIResultType drawGUIControl(object[] args = null)
+        {
+            if (this.MyDrawGUIControlBodyMethod == null)
+            {
+                this.MyDrawGUIControlBodyMethod = getMyDrawGUIControlBodyMethod();
+            }
             this.drawGUIControlHead();
-            var myType = this.GetType();
-            var myDrawGUIControlBodyMethod = myType.GetMethod("drawGUIControlBody", BindingFlags.NonPublic | BindingFlags.Instance, null, argumentTypes, null);
-            CustomGUIResultType rData = (CustomGUIResultType)myDrawGUIControlBodyMethod.Invoke(this, args);
+            CustomGUIResultType rData = (CustomGUIResultType)this.MyDrawGUIControlBodyMethod.Invoke(this, args != null ? args : new object[] { });
             this.drawGUIControlFooter();
             return (rData);
+        }
+
+        private MethodInfo getMyDrawGUIControlBodyMethod()
+        {
+            // Cache the method to call. 
+            var myType = this.GetType();
+            return myType.GetMethod("drawGUIControlBody", BindingFlags.NonPublic | BindingFlags.Instance, null, this.getArgumentTypes(), null);
         }
 
         protected virtual void drawGUIControlHead()
         {
             GUILayout.BeginHorizontal();
+        }
+
+        protected virtual Type[] getArgumentTypes()
+        {
+            // The is flaky when stored as a variable. 
+            return new Type[] { };
         }
 
         protected abstract CustomGUIResultType drawGUIControlBody();

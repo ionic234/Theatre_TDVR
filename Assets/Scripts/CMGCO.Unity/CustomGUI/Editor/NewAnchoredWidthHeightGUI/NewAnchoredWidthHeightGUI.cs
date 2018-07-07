@@ -12,6 +12,14 @@ namespace CMGCO.Unity.CustomGUI.NewAnchoredWidthHeight
     public class NewAnchoredWidthHeightGUI : NewCustomGUIBase<AnchoredWidthHeightResult>
     {
 
+        protected override Type[] getArgumentTypes()
+        {
+            return new Type[] {
+                typeof(AnchoredWidthHeightResult), typeof(String)
+            };
+        }
+
+
         private static readonly NewAnchoredWidthHeightGUI instance = new NewAnchoredWidthHeightGUI();
         public static NewAnchoredWidthHeightGUI _instance
         {
@@ -23,19 +31,17 @@ namespace CMGCO.Unity.CustomGUI.NewAnchoredWidthHeight
 
         public AnchoredWidthHeightResult drawGUIControl(AnchoredWidthHeightResult currentResult, string lableString = "Dimensions")
         {
-            return base.drawGUIControl(new Type[] { typeof(AnchoredWidthHeightResult), typeof(String) }, new object[] { currentResult, lableString });
+            return base.drawGUIControl(new object[] { currentResult, lableString });
         }
 
         protected override AnchoredWidthHeightResult drawGUIControlBody()
         {
-
+            // Defualt isn't used
             return new AnchoredWidthHeightResult(false, new Rect(), Anchors.NONE);
         }
 
         protected AnchoredWidthHeightResult drawGUIControlBody(AnchoredWidthHeightResult currentResult, string lableString = "Dimensions")
         {
-            Debug.Log("all we're saying is give peace a chance");
-
             Rect currentRect = currentResult._resultValue;
 
             int controlLines = EditorGUIUtility.currentViewWidth > CustomEditorGUIUtility.flowBreakWidth ? 1 : 2; // Determine if our content will wrap over several lines or not 
