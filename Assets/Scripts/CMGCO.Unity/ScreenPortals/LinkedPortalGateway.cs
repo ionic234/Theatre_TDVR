@@ -40,6 +40,9 @@ namespace CMGCO.Unity.ScreenPortals
         public LinkedPortalGateway exitPortalScript;
 
         [SerializeField]
+
+
+
         private Vector2 screenRatio;
         public Vector2 _screenRatio
         {
@@ -55,8 +58,8 @@ namespace CMGCO.Unity.ScreenPortals
         }
 
         [SerializeField]
-        private Vector2 screenSize = new Vector2(1, 1);
-        public Vector2 _screenSize
+        private Rect screenSize = new Rect(0, 0, 1, 1);  //new Vector2(1, 1);
+        public Rect _screenSize
         {
             get
             {
@@ -159,7 +162,7 @@ namespace CMGCO.Unity.ScreenPortals
             if (isResetToDefault)
             {
                 this.setScreenRatio(new Vector2(), isPropigate);
-                this.setScreenSize(new Vector2(1, 1), isPropigate);
+                this.setScreenSize(new Rect(0, 0, 1, 1), isPropigate);
                 this.setTargetFOV(60, isPropigate);
             }
 
@@ -181,37 +184,37 @@ namespace CMGCO.Unity.ScreenPortals
             }
         }
 
-        public Vector2 calcScreenSize(bool constrianToX = true)
+        public Rect calcScreenSize(bool constrianToX = true)
         {
 
-            Vector2 newScreenSize;
+            Rect newScreenSize;
             if (constrianToX)
             {
-                newScreenSize = new Vector2(screenSize.x, (screenSize.x / screenRatio.x) * screenRatio.y);
+                newScreenSize = new Rect(0, 0, screenSize.x, (screenSize.x / screenRatio.x) * screenRatio.y);
             }
             else
             {
-                newScreenSize = new Vector2((screenSize.y / screenRatio.y) * screenRatio.x, screenSize.y);
+                newScreenSize = new Rect(0, 0, (screenSize.y / screenRatio.y) * screenRatio.x, screenSize.y);
             }
             this.setScreenSize(newScreenSize, true);
             return (newScreenSize);
         }
-        public Vector2 calcScreenSize(Vector2 currentScreenSize, bool constrianToX = true)
+        public Rect calcScreenSize(Rect currentScreenSize, bool constrianToX = true)
         {
-            Vector2 newScreenSize;
+            Rect newScreenSize;
             if (constrianToX)
             {
-                newScreenSize = new Vector2(currentScreenSize.x, (currentScreenSize.x / screenRatio.x) * screenRatio.y);
+                newScreenSize = new Rect(0, 0, currentScreenSize.x, (currentScreenSize.x / screenRatio.x) * screenRatio.y);
             }
             else
             {
-                newScreenSize = new Vector2((currentScreenSize.y / screenRatio.y) * screenRatio.x, currentScreenSize.y);
+                newScreenSize = new Rect(0, 0, (currentScreenSize.y / screenRatio.y) * screenRatio.x, currentScreenSize.y);
             }
             this.setScreenSize(newScreenSize, true);
             return (newScreenSize);
         }
 
-        public void setScreenSize(Vector2 newScreenSize, bool isPropigate = false)
+        public void setScreenSize(Rect newScreenSize, bool isPropigate = false)
         {
             this.screenSize = newScreenSize;
             if (isPropigate && this.exitPortal != null)

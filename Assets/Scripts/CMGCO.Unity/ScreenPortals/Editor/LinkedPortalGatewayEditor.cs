@@ -5,6 +5,7 @@ using CMGCO.Unity.CustomGUI.Base;
 using CMGCO.Unity.CustomGUI.AspectRatio;
 using CMGCO.Unity.CustomGUI.AnchoredWidthHeight;
 
+using CMGCO.Unity.CustomGUI.NewAnchoredWidthHeight;
 
 namespace CMGCO.Unity.ScreenPortals
 {
@@ -25,8 +26,8 @@ namespace CMGCO.Unity.ScreenPortals
         private LinkedPortalGateway exitPortalScript;
 
         private CustomGUIResult<AspectRatioIDs, Vector2> aspectRatioResult;
+        private AnchoredWidthHeightResult screenSizeResult = new AnchoredWidthHeightResult(false, Anchors.NONE, new Rect());
 
-        private CustomGUIResult<WidthHeightAnchors, Vector2> screenSizeResult;
 
         private float cameraFOV;
 
@@ -74,8 +75,9 @@ namespace CMGCO.Unity.ScreenPortals
                 Vector2 serializedRatioValue = (Vector2)serializedObject.FindProperty("screenRatio").vector2Value;
                 this.aspectRatioResult = AspectRatioGUI._instance.getDropDownResultFromValue(serializedRatioValue);
 
-                Vector2 serializedScreenSizeValue = (Vector2)serializedObject.FindProperty("screenSize").vector2Value;
-                this.screenSizeResult = new CustomGUIResult<WidthHeightAnchors, Vector2>((WidthHeightAnchors)0, serializedScreenSizeValue);
+                Rect serializedScreenSizeValue = (Rect)serializedObject.FindProperty("screenSize").rectValue;
+                this.screenSizeResult = new AnchoredWidthHeightResult(false, Anchors.NONE, serializedScreenSizeValue);
+                //this.screenSizeResult = new CustomGUIResult<WidthHeightAnchors, Vector2>((WidthHeightAnchors)0, serializedScreenSizeValue);
 
                 this.cameraFOV = (float)serializedObject.FindProperty("targetFOV").floatValue;
                 this.isVisible = (bool)serializedObject.FindProperty("isVisible").boolValue;
@@ -212,78 +214,51 @@ namespace CMGCO.Unity.ScreenPortals
             }
         }
 
+
         private void drawWidthHeight()
         {
-            var accumulativeX = 0f;
-            float charWidth = 16f;
-            var rect = EditorGUILayout.GetControlRect(true, EditorGUIUtility.singleLineHeight);
 
-            var label = new GUIContent("Dimensions");
-            var labelArray = new GUIContent[]{
-                new GUIContent("W"),
-                new GUIContent("H")
-            };
-            var valueArray = new float[]{
-                10f,
-                20f
-            };
 
-            var floatFieldWidth = 0f;
 
-            // Render the label; 
-            EditorGUI.LabelField(new Rect(rect.x, rect.y, EditorGUIUtility.labelWidth, rect.height), label);
 
-            if (EditorGUIUtility.currentViewWidth > 332)
+
+
+            //this.screenSizeResult = 
+            this.screenSizeResult = NewAnchoredWidthHeightGUI._instance.drawGUIControl(this.screenSizeResult);
+            if (screenSizeResult._hasChanged)
             {
-                // Normal render
-                accumulativeX = rect.x + EditorGUIUtility.labelWidth;
-                var groupRect = new Rect(rect.x + EditorGUIUtility.labelWidth, rect.y, rect.width - EditorGUIUtility.labelWidth, rect.height);
-                floatFieldWidth = ((groupRect.width - (charWidth * labelArray.Length)) / valueArray.Length);
-                floatFieldWidth = (floatFieldWidth / 100) * 64.8f;
-            }
-            else
-            {
-                // Render on two lines 
-                EditorGUI.LabelField(new Rect(rect.x, rect.y, EditorGUIUtility.labelWidth, rect.height), label);
-                EditorGUI.indentLevel++;
-                rect = EditorGUILayout.GetControlRect(true, EditorGUIUtility.singleLineHeight);
-                rect = EditorGUI.IndentedRect(rect);
-                accumulativeX = rect.x;
-                EditorGUI.indentLevel--;
-                floatFieldWidth = ((rect.width - (charWidth * labelArray.Length)) / valueArray.Length);
-            }
+                int group = Undo.GetCurrentGroup();
+                string undoName = "Change Screen Size";
+                Undo.SetCurrentGroupName(undoName);
+                Undo.RecordObjects(new LinkedPortalGateway[] { this.myLinkedPortalGateway, this.exitPortalScript }, undoName);
+                //this.calcScreenSize();
+                this.myLinkedPortalGateway._screenSize = this.screenSizeResult._widthHeightRect;
 
-            for (var i = 0; i < labelArray.Length; i++)
-            {
-                EditorGUI.LabelField(new Rect(accumulativeX, rect.y, charWidth, rect.height), new GUIContent(labelArray[i]), i > 0 ? CustomEditorStyles._instance._centerAlign : new GUIStyle());
-                accumulativeX += charWidth;
-                EditorGUI.FloatField(new Rect(accumulativeX, rect.y, floatFieldWidth, rect.height), valueArray[i]);
-                accumulativeX += floatFieldWidth;
+
+                Undo.CollapseUndoOperations(group);
+                this.screenSizeResult.ResetHasChanged();
             }
 
             /* 
-            this.screenSizeResult = AnchoredWidthHeightGUI._instance.drawGUIControl(this.screenSizeResult);
-            if (!this.screenSizeResult.resultValue.Equals(this.myLinkedPortalGateway._screenSize))
+            if (this.screenSizeResult._hasChanged)
             {
-                // it has changed
                 int group = Undo.GetCurrentGroup();
                 string undoName = "Change Screen Size";
                 Undo.SetCurrentGroupName(undoName);
                 Undo.RecordObjects(new LinkedPortalGateway[] { this.myLinkedPortalGateway, this.exitPortalScript }, undoName);
                 this.calcScreenSize();
                 Undo.CollapseUndoOperations(group);
+                this.screenSizeResult.ResetHasChanged();
             }
             */
-
-
         }
-
-
-
 
         private void calcScreenSize()
         {
-            this.screenSizeResult.resultValue = this.myLinkedPortalGateway.calcScreenSize(this.screenSizeResult.resultValue, this.screenSizeResult.resultID == (WidthHeightAnchors)0);
+
+            //this.screenSizeResult
+
+            //this.screenSizeResult.resultValue = this.myLinkedPortalGateway.calcScreenSize(this.screenSizeResult.resultValue, this.screenSizeResult.resultID == (WidthHeightAnchors)0);
             // Need to work out how this will change the box collider and how that will get called again on undo / redo
         }
 

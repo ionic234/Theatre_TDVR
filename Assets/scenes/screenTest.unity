@@ -484,9 +484,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   exitPortal: {fileID: 1179685609}
   exitPortalScript: {fileID: 1179685612}
-  screenRatio: {x: 1.33, y: 1}
-  screenSize: {x: 1, y: 1}
-  targetFOV: 60
+  screenRatio: {x: 41.7, y: -3.58}
+  screenSize:
+    serializedVersion: 2
+    x: 673.1
+    y: 0
+    width: -1.15
+    height: 3
+  targetFOV: 116.58
   transitionObjectsWhiltelist: []
   isVisible: 0
 --- !u!43 &936077575
@@ -1094,7 +1099,7 @@ Mesh:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: pb_Mesh13782
+  m_Name: pb_Mesh13784
   serializedVersion: 8
   m_SubMeshes:
   - serializedVersion: 2
@@ -1452,8 +1457,13 @@ MonoBehaviour:
   exitPortal: {fileID: 825770143}
   exitPortalScript: {fileID: 825770146}
   screenRatio: {x: 1.33, y: 1}
-  screenSize: {x: 1, y: 1}
-  targetFOV: 60
+  screenSize:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  targetFOV: 116.58
   transitionObjectsWhiltelist:
   - {fileID: 1620494161}
   isVisible: 0

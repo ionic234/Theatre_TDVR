@@ -19,6 +19,8 @@ namespace CMGCO.Unity.CustomGUI.Base
 
         }
 
+
+
         private GUIStyle error;
         public GUIStyle _error
         {
@@ -50,21 +52,8 @@ namespace CMGCO.Unity.CustomGUI.Base
             }
         }
 
-        private GUIStyle LeftAlign;
-        public GUIStyle _leftAlign
-        {
-            get
-            {
-                if (this.LeftAlign == null)
-                {
-                    this.LeftAlign = new GUIStyle();
-                    this.LeftAlign.alignment = TextAnchor.MiddleLeft;
-                    this.LeftAlign.padding.top = 3;
-                    this.LeftAlign.clipping = TextClipping.Clip;
-                }
-                return this.LeftAlign;
-            }
-        }
+
+
 
         private GUIStyle CenterAlign;
         public GUIStyle _centerAlign
@@ -98,6 +87,146 @@ namespace CMGCO.Unity.CustomGUI.Base
                 }
                 return this.bold;
             }
+        }
+
+        private GUIStyle boldCenterAlign;
+        public GUIStyle _boldCenterAlign
+        {
+            get
+            {
+                if (this.boldCenterAlign == null)
+                {
+                    this.boldCenterAlign = new GUIStyle();
+                    this.boldCenterAlign.fontStyle = FontStyle.Bold;
+                    this.boldCenterAlign.alignment = TextAnchor.UpperCenter;
+                    this.boldCenterAlign.padding.top = 3;
+                    this.boldCenterAlign.clipping = TextClipping.Clip;
+                }
+                return this.boldCenterAlign;
+            }
+        }
+
+
+
+
+
+
+
+        // Styles for use with AnchoredWidthHeight
+        private GUIStyle anchoredWidthHeightLabelFix;
+        public GUIStyle _anchoredWidthHeightLabelFix
+        {
+            get
+            {
+                if (this.anchoredWidthHeightLabelFix == null)
+                {
+                    this.anchoredWidthHeightLabelFix = new GUIStyle();
+                    this.anchoredWidthHeightLabelFix.padding.left = 3;
+                    this.anchoredWidthHeightLabelFix.padding.top = 1;
+                }
+                return this.anchoredWidthHeightLabelFix;
+            }
+        }
+
+        private GUIStyle anchoredWidthHeightFocus;
+        public GUIStyle _anchoredWidthHeightFocus
+        {
+            get
+            {
+                if (this.anchoredWidthHeightFocus == null)
+                {
+                    this.anchoredWidthHeightFocus = new GUIStyle();
+                    this.anchoredWidthHeightFocus.normal.textColor = Color.blue;
+                    this.anchoredWidthHeightFocus.padding.top = 1;
+                    this.anchoredWidthHeightFocus.padding.left = 2;
+
+                }
+                return this.anchoredWidthHeightFocus;
+            }
+        }
+
+        private GUIStyle anchoredWidthHeightFocusFix;
+        public GUIStyle _anchoredWidthHeightFocusFix
+        {
+            get
+            {
+                if (this.anchoredWidthHeightFocusFix == null)
+                {
+                    this.anchoredWidthHeightFocusFix = new GUIStyle();
+                    this.anchoredWidthHeightFocusFix.normal.textColor = Color.blue;
+                    this.anchoredWidthHeightFocusFix.padding.top = 1;
+                    this.anchoredWidthHeightFocusFix.padding.left = 3;
+                }
+                return this.anchoredWidthHeightFocusFix;
+            }
+        }
+
+        private GUIStyle anchordWidthHeightAnchored;
+        public GUIStyle _anchordWidthHeightAnchored
+        {
+            get
+            {
+                if (this.anchordWidthHeightAnchored == null)
+                {
+                    this.anchordWidthHeightAnchored = new GUIStyle();
+                    this.anchordWidthHeightAnchored.fontStyle = FontStyle.Bold;
+                    this.anchordWidthHeightAnchored.padding.top = 1;
+                    this.anchordWidthHeightAnchored.padding.left = 1;
+                }
+                return this.anchordWidthHeightAnchored;
+            }
+        }
+
+        private GUIStyle anchoredWidhtHeightAnchoredFix;
+        public GUIStyle _anchordWidthHeightAnchoredFix
+        {
+            get
+            {
+                if (this.anchoredWidhtHeightAnchoredFix == null)
+                {
+                    this.anchoredWidhtHeightAnchoredFix = new GUIStyle();
+                    this.anchoredWidhtHeightAnchoredFix.fontStyle = FontStyle.Bold;
+                    this.anchoredWidhtHeightAnchoredFix.padding.top = 1;
+                    this.anchoredWidhtHeightAnchoredFix.padding.left = 3;
+                }
+                return this.anchoredWidhtHeightAnchoredFix;
+            }
+        }
+
+        private GUIStyle anchoredWidthHeightFocusAnchored;
+        public GUIStyle _anchoredWidthHeightFocusAnchored
+        {
+            get
+            {
+                if (this.anchoredWidthHeightFocusAnchored == null)
+                {
+                    this.anchoredWidthHeightFocusAnchored = new GUIStyle();
+                    this.anchoredWidthHeightFocusAnchored.normal.textColor = Color.blue;
+                    this.anchoredWidthHeightFocusAnchored.padding.top = 1;
+                    this.anchoredWidthHeightFocusAnchored.padding.left = 1;
+                    this.anchoredWidthHeightFocusAnchored.fontStyle = FontStyle.Bold;
+                }
+                return this.anchoredWidthHeightFocusAnchored;
+            }
+        }
+
+        private GUIStyle anchoredWidthHeightFocusAnchoredFix;
+        public GUIStyle _anchoredWidthHeightFocusAnchoredFix
+        {
+            get
+            {
+                if (this.anchoredWidthHeightFocusAnchoredFix == null)
+                {
+                    this.anchoredWidthHeightFocusAnchoredFix = new GUIStyle();
+                    this.anchoredWidthHeightFocusAnchoredFix.normal.textColor = Color.blue;
+                    this.anchoredWidthHeightFocusAnchoredFix.fontStyle = FontStyle.Bold;
+                    this.anchoredWidthHeightFocusAnchoredFix.padding.top = 1;
+                    this.anchoredWidthHeightFocusAnchoredFix.padding.left = 3;
+                }
+                return this.anchoredWidthHeightFocusAnchoredFix;
+            }
+
+
         }
     }
 }
