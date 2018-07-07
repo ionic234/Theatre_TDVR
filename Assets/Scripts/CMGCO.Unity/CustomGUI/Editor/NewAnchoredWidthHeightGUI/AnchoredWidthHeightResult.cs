@@ -1,23 +1,12 @@
 
 using UnityEngine;
-
+using CMGCO.Unity.CustomGUI.Base;
 
 namespace CMGCO.Unity.CustomGUI.NewAnchoredWidthHeight
 {
     public enum Anchors { WIDTH, HEIGHT, NONE }
-
-    public class AnchoredWidthHeightResult
+    public class AnchoredWidthHeightResult : NewCustomGUIResult<Rect>
     {
-
-        private bool hasChanged;
-        public bool _hasChanged
-        {
-            get;
-            private set;
-        }
-
-
-
         private bool anchor;
         public Anchors _anchor
         {
@@ -25,23 +14,9 @@ namespace CMGCO.Unity.CustomGUI.NewAnchoredWidthHeight
             private set;
         }
 
-        private Rect widthHeightRect;
-        public Rect _widthHeightRect
+        public AnchoredWidthHeightResult(bool nHasChanged, Rect nResultValue, Anchors nAnchor) : base(nHasChanged, nResultValue)
         {
-            get;
-            private set;
-        }
-
-        public AnchoredWidthHeightResult(bool hasChanged, Anchors anchor, Rect widthHeightRect)
-        {
-            this._hasChanged = hasChanged;
-            this._anchor = anchor;
-            this._widthHeightRect = widthHeightRect;
-        }
-
-        public void ResetHasChanged()
-        {
-            this._hasChanged = false;
+            this._anchor = nAnchor;
         }
     }
 }

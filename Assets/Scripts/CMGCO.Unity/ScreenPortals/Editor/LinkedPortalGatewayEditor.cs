@@ -26,7 +26,7 @@ namespace CMGCO.Unity.ScreenPortals
         private LinkedPortalGateway exitPortalScript;
 
         private CustomGUIResult<AspectRatioIDs, Vector2> aspectRatioResult;
-        private AnchoredWidthHeightResult screenSizeResult = new AnchoredWidthHeightResult(false, Anchors.NONE, new Rect());
+        private AnchoredWidthHeightResult screenSizeResult = new AnchoredWidthHeightResult(false, new Rect(), Anchors.NONE);
 
 
         private float cameraFOV;
@@ -37,8 +37,6 @@ namespace CMGCO.Unity.ScreenPortals
 
         private void OnEnable()
         {
-
-
             // Get the editors target 
             this.myLinkedPortalGateway = (LinkedPortalGateway)target;
 
@@ -50,14 +48,12 @@ namespace CMGCO.Unity.ScreenPortals
                 if (this.myLinkedPortalGateway.exitPortalScript.exitPortalScript == null)
                 {
                     // It hads forgotten us set it back up 
-                    Debug.Log("Reistablist link");
                     this.myLinkedPortalGateway.setExitPortal(this.myLinkedPortalGateway._exitPortal, true);
                     this.myLinkedPortalGateway.giveLinkedProperties();
                 }
                 else if (!this.myLinkedPortalGateway.exitPortalScript.exitPortalScript.Equals(this.myLinkedPortalGateway))
                 {
                     // We are a clone. Clear our exit portal
-                    Debug.Log("CLEAR FROM CLONE");
                     this.myLinkedPortalGateway.clearExitPortal(false);
                 }
             }
@@ -72,12 +68,15 @@ namespace CMGCO.Unity.ScreenPortals
             if (this.exitPortalResult.resultValue)
             {
                 // Get the values now we know were set up for it 
+
+
+
                 Vector2 serializedRatioValue = (Vector2)serializedObject.FindProperty("screenRatio").vector2Value;
                 this.aspectRatioResult = AspectRatioGUI._instance.getDropDownResultFromValue(serializedRatioValue);
 
                 Rect serializedScreenSizeValue = (Rect)serializedObject.FindProperty("screenSize").rectValue;
-                this.screenSizeResult = new AnchoredWidthHeightResult(false, Anchors.NONE, serializedScreenSizeValue);
-                //this.screenSizeResult = new CustomGUIResult<WidthHeightAnchors, Vector2>((WidthHeightAnchors)0, serializedScreenSizeValue);
+                this.screenSizeResult = new AnchoredWidthHeightResult(false, serializedScreenSizeValue, Anchors.NONE);
+
 
                 this.cameraFOV = (float)serializedObject.FindProperty("targetFOV").floatValue;
                 this.isVisible = (bool)serializedObject.FindProperty("isVisible").boolValue;
@@ -232,7 +231,7 @@ namespace CMGCO.Unity.ScreenPortals
                 Undo.SetCurrentGroupName(undoName);
                 Undo.RecordObjects(new LinkedPortalGateway[] { this.myLinkedPortalGateway, this.exitPortalScript }, undoName);
                 //this.calcScreenSize();
-                this.myLinkedPortalGateway._screenSize = this.screenSizeResult._widthHeightRect;
+                //this.myLinkedPortalGateway._screenSize = this.screenSizeResult._widthHeightRect;
 
 
                 Undo.CollapseUndoOperations(group);

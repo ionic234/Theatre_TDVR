@@ -9,8 +9,7 @@ using System.ComponentModel;
 namespace CMGCO.Unity.CustomGUI.NewAnchoredWidthHeight
 {
 
-
-    public class NewAnchoredWidthHeightGUI
+    public class NewAnchoredWidthHeightGUI : NewCustomGUIBase<AnchoredWidthHeightResult>
     {
 
         private static readonly NewAnchoredWidthHeightGUI instance = new NewAnchoredWidthHeightGUI();
@@ -22,25 +21,23 @@ namespace CMGCO.Unity.CustomGUI.NewAnchoredWidthHeight
             }
         }
 
-        // We're going to write everything in here and split it out later for fun an proft. 
         public AnchoredWidthHeightResult drawGUIControl(AnchoredWidthHeightResult currentResult, string lableString = "Dimensions")
         {
-            this.drawGUIControlHead();
-            var rData = this.drawGUIControlBody(currentResult, lableString);
-            this.drawGUIControlFooter();
-            return rData;
+            return base.drawGUIControl(new Type[] { typeof(AnchoredWidthHeightResult), typeof(String) }, new object[] { currentResult, lableString });
         }
 
-
-        private void drawGUIControlHead()
+        protected override AnchoredWidthHeightResult drawGUIControlBody()
         {
-            //GUILayout.BeginHorizontal();
-            // Nothing needed for this one i think.
+
+            return new AnchoredWidthHeightResult(false, new Rect(), Anchors.NONE);
         }
 
-        private AnchoredWidthHeightResult drawGUIControlBody(AnchoredWidthHeightResult currentResult, string lableString)
+        protected AnchoredWidthHeightResult drawGUIControlBody(AnchoredWidthHeightResult currentResult, string lableString = "Dimensions")
         {
-            Rect currentRect = currentResult._widthHeightRect;
+            Debug.Log("all we're saying is give peace a chance");
+
+            Rect currentRect = currentResult._resultValue;
+
             int controlLines = EditorGUIUtility.currentViewWidth > CustomEditorGUIUtility.flowBreakWidth ? 1 : 2; // Determine if our content will wrap over several lines or not 
             Rect controlContainerRect = EditorGUILayout.GetControlRect(true, EditorGUIUtility.singleLineHeight);
             Rect floatControlsContainerRect = this.drawPrefixLabel(controlContainerRect, controlLines, lableString);
@@ -52,17 +49,23 @@ namespace CMGCO.Unity.CustomGUI.NewAnchoredWidthHeight
             float newWidth = drawFloatControl("W", currentRect.width, floatControlsContainerRect, singleFieldWidth, 0, currentResult._anchor.Equals(Anchors.WIDTH), lableString);
             if (EditorGUI.EndChangeCheck())
             {
-                return new AnchoredWidthHeightResult(true, Anchors.WIDTH, new Rect(currentRect.x, currentRect.y, newWidth, currentRect.height));
+                return new AnchoredWidthHeightResult(true, new Rect(currentRect.x, currentRect.y, newWidth, currentRect.height), Anchors.WIDTH);
             }
 
             EditorGUI.BeginChangeCheck();
             float newHeight = drawFloatControl("H", currentRect.height, floatControlsContainerRect, singleFieldWidth, 1, currentResult._anchor.Equals(Anchors.HEIGHT), lableString);
             if (EditorGUI.EndChangeCheck())
             {
-                return new AnchoredWidthHeightResult(true, Anchors.HEIGHT, new Rect(currentRect.x, currentRect.y, currentRect.width, newHeight));
+                //return new AnchoredWidthHeightResult(true, Anchors.HEIGHT, new Rect(currentRect.x, currentRect.y, currentRect.width, newHeight));
+                return new AnchoredWidthHeightResult(true, new Rect(currentRect.x, currentRect.y, currentRect.width, newHeight), Anchors.HEIGHT);
             }
 
             return currentResult;
+        }
+
+        protected override void drawGUIControlHead()
+        {
+            // Nothing needed for this one.
         }
 
         private Rect drawPrefixLabel(Rect containerRect, int controlLines, string lableString)
@@ -145,9 +148,8 @@ namespace CMGCO.Unity.CustomGUI.NewAnchoredWidthHeight
             }
         }
 
-        private void drawGUIControlFooter()
+        protected override void drawGUIControlFooter()
         {
-            //GUILayout.EndHorizontal();
             GUILayout.Space(5);
         }
     }

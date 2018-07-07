@@ -484,14 +484,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   exitPortal: {fileID: 1179685609}
   exitPortalScript: {fileID: 1179685612}
-  screenRatio: {x: 41.7, y: -3.58}
+  screenRatio: {x: 1.33, y: 1}
   screenSize:
     serializedVersion: 2
-    x: 673.1
+    x: 0
     y: 0
-    width: -1.15
-    height: 3
-  targetFOV: 116.58
+    width: 1
+    height: 1
+  targetFOV: 60
   transitionObjectsWhiltelist: []
   isVisible: 0
 --- !u!43 &936077575
@@ -1461,9 +1461,9 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 0
-    height: 0
-  targetFOV: 116.58
+    width: 1
+    height: 1
+  targetFOV: 60
   transitionObjectsWhiltelist:
   - {fileID: 1620494161}
   isVisible: 0
