@@ -224,6 +224,8 @@ namespace CMGCO.Unity.ScreenPortals
 
             //this.screenSizeResult = 
             this.screenSizeResult = NewAnchoredWidthHeightGUI._instance.drawGUIControl(this.screenSizeResult);
+
+            /* 
             if (screenSizeResult._hasChanged)
             {
                 int group = Undo.GetCurrentGroup();
@@ -237,6 +239,8 @@ namespace CMGCO.Unity.ScreenPortals
                 Undo.CollapseUndoOperations(group);
                 this.screenSizeResult.ResetHasChanged();
             }
+            */
+
 
             /* 
             if (this.screenSizeResult._hasChanged)

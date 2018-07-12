@@ -19,7 +19,6 @@ namespace CMGCO.Unity.CustomGUI.NewAnchoredWidthHeight
             };
         }
 
-
         private static readonly NewAnchoredWidthHeightGUI instance = new NewAnchoredWidthHeightGUI();
         public static NewAnchoredWidthHeightGUI _instance
         {
@@ -29,15 +28,11 @@ namespace CMGCO.Unity.CustomGUI.NewAnchoredWidthHeight
             }
         }
 
+        private NewAnchoredWidthHeightGUI() { }
+
         public AnchoredWidthHeightResult drawGUIControl(AnchoredWidthHeightResult currentResult, string lableString = "Dimensions")
         {
             return base.drawGUIControl(new object[] { currentResult, lableString });
-        }
-
-        protected override AnchoredWidthHeightResult drawGUIControlBody()
-        {
-            // Defualt isn't used
-            return new AnchoredWidthHeightResult(false, new Rect(), Anchors.NONE);
         }
 
         protected AnchoredWidthHeightResult drawGUIControlBody(AnchoredWidthHeightResult currentResult, string lableString = "Dimensions")
@@ -62,7 +57,6 @@ namespace CMGCO.Unity.CustomGUI.NewAnchoredWidthHeight
             float newHeight = drawFloatControl("H", currentRect.height, floatControlsContainerRect, singleFieldWidth, 1, currentResult._anchor.Equals(Anchors.HEIGHT), lableString);
             if (EditorGUI.EndChangeCheck())
             {
-                //return new AnchoredWidthHeightResult(true, Anchors.HEIGHT, new Rect(currentRect.x, currentRect.y, currentRect.width, newHeight));
                 return new AnchoredWidthHeightResult(true, new Rect(currentRect.x, currentRect.y, currentRect.width, newHeight), Anchors.HEIGHT);
             }
 
@@ -125,8 +119,6 @@ namespace CMGCO.Unity.CustomGUI.NewAnchoredWidthHeight
             object[] parameters = new object[] { recycledEditor, fieldRect, labelRect, controlID, value, "g7", EditorStyles.numberField, true, .2f };
             return (float)doFloatFieldMethod.Invoke(null, parameters);
         }
-
-
         private GUIStyle getLableStyle(string controlName, int controlCount, bool isAnchored)
         {
             if (GUI.GetNameOfFocusedControl().Equals(controlName))

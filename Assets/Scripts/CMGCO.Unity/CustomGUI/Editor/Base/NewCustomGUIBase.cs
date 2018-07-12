@@ -16,25 +16,36 @@ namespace CMGCO.Unity.CustomGUI.Base
 
 
         private MethodInfo MyDrawGUIControlBodyMethod;
-        private MethodInfo MyParameterlessDrawGUIControlBodyMethod;
 
+        // If you recieve overload method missmatch remember you need to implemenmt an overloaded Method in your extending class that converts the given parmeters into an object array. 
         public virtual CustomGUIResultType drawGUIControl(object[] args = null)
         {
             if (this.MyDrawGUIControlBodyMethod == null)
             {
                 this.getMyDrawGUIControlBodyMethod();
             }
-
             this.drawGUIControlHead();
-
             CustomGUIResultType rData;
-            if (args == null || args.Length == 0)
+
+            try
             {
-                rData = (CustomGUIResultType)this.MyParameterlessDrawGUIControlBodyMethod.Invoke(this, args != null ? args : new object[] { });
+                rData = (CustomGUIResultType)this.MyDrawGUIControlBodyMethod.Invoke(this, args != null ? args : new object[] { });
             }
-            else
+            // Default messages are not very helpful for finding the actualy problem. 
+            catch (NullReferenceException)
             {
-                rData = (CustomGUIResultType)this.MyDrawGUIControlBodyMethod.Invoke(this, args);
+                Debug.LogError(this.GetType().Name + " does not implement the required function [drawGUIControlBody]");
+                rData = default(CustomGUIResultType);
+            }
+            catch (TargetParameterCountException)
+            {
+                Debug.LogError(this.GetType().Name + " function [drawGUIControlBody] recieved the wrong number of arguments");
+                rData = default(CustomGUIResultType);
+            }
+            catch (ArgumentException)
+            {
+                Debug.LogError(this.GetType().Name + " function [drawGUIControlBody] recieved the wrong type of arguments");
+                rData = default(CustomGUIResultType);
             }
 
             this.drawGUIControlFooter();
@@ -46,7 +57,6 @@ namespace CMGCO.Unity.CustomGUI.Base
             // Cache the method to call. 
             var myType = this.GetType();
             this.MyDrawGUIControlBodyMethod = myType.GetMethod("drawGUIControlBody", BindingFlags.NonPublic | BindingFlags.Instance, null, this.getArgumentTypes(), null);
-            this.MyParameterlessDrawGUIControlBodyMethod = myType.GetMethod("drawGUIControlBody", BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { }, null);
         }
 
         protected virtual void drawGUIControlHead()
@@ -60,8 +70,6 @@ namespace CMGCO.Unity.CustomGUI.Base
             return new Type[] { };
         }
 
-        protected abstract CustomGUIResultType drawGUIControlBody();
-
         protected virtual void drawGUIControlFooter()
         {
             GUILayout.EndHorizontal();
@@ -69,29 +77,3 @@ namespace CMGCO.Unity.CustomGUI.Base
         }
     }
 }
-
-
-
-
-/*
-      public CustomGUIResult<DataIDType, DataValueType> drawGUIControl(CustomGUIResult<DataIDType, DataValueType> currentResult, string lableString = "")
-      {
-          this.drawGUIControlhead();
-          CustomGUIResult<DataIDType, DataValueType> rData = this.drawGUIControlBody(currentResult, lableString);
-          this.drawGUIControlFooter();
-          return (rData);
-      }
-
-      protected virtual void drawGUIControlhead()
-      {
-          GUILayout.BeginHorizontal();
-      }
-
-      protected abstract CustomGUIResult<DataIDType, DataValueType> drawGUIControlBody(CustomGUIResult<DataIDType, DataValueType> currentResult, string lableString);
-
-      protected virtual void drawGUIControlFooter()
-      {
-          GUILayout.EndHorizontal();
-          GUILayout.Space(5);
-      }
-       */
