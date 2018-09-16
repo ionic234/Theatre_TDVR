@@ -458,7 +458,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   testNumber: 20
-  destinationPortalGateway: {fileID: 0}
+  destinationPortalGateway: {fileID: 1179685613}
 --- !u!4 &825770145
 Transform:
   m_ObjectHideFlags: 0
@@ -1445,7 +1445,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   testNumber: 30
-  destinationPortalGateway: {fileID: 0}
+  destinationPortalGateway: {fileID: 825770144}
 --- !u!43 &1426374368
 Mesh:
   m_ObjectHideFlags: 0

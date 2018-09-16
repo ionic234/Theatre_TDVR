@@ -30,34 +30,38 @@ namespace CMGCO.Unity.EinsteinRosenBridge
             }
         }
 
-        public void SetDestinationPortal(PortalGateway newDestinationPortalGateway, bool isPropigate = false, bool isValidate = true)
+        public void SetDestinationPortal(PortalGateway newDestinationPortalGateway, bool isPropigate = false, bool isValidate = false)
         {
-            if (PortalGatewayValidator.Validate(DestinationPortalGateway, this))
+            if (!isValidate || PortalGatewayValidator.Validate(newDestinationPortalGateway, this))
             {
-                if (this.DestinationPortalGateway != null)
+                if (this.destinationPortalGateway != null)
                 {
                     // Clear the old destination portal. 
-                    this.DestinationPortalGateway.ClearDestinationPortal();
+                    this.destinationPortalGateway.ClearDestinationPortal();
                 }
 
-                this.DestinationPortalGateway = newDestinationPortalGateway;
+                this.destinationPortalGateway = newDestinationPortalGateway;
                 if (isPropigate)
                 {
-                    this.DestinationPortalGateway.SetDestinationPortal(this.DestinationPortalGateway);
+                    this.destinationPortalGateway.SetDestinationPortal(this, false);
                 }
             }
 
         }
 
-
         public void PropagateSharedProperties()
         {
+            Debug.Log("PropagateSharedProperties");
+        }
 
+        public void InheritSharedProperties()
+        {
+            Debug.Log("InheritSharedProperties");
         }
 
         public void ClearDestinationPortal()
         {
-
+            Debug.Log("ClearDestinationPortal");
         }
     }
 }

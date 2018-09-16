@@ -6,14 +6,14 @@ namespace CMGCO.Unity.CustomGUI.Base
     public class CustomGUIResult<T> where T : UnityEngine.Object
     {
 
-        protected T resultValue;
+        //protected T resultValue;
         public T ResultValue
         {
             get;
             protected set;
         }
 
-        protected bool hasChanged;
+        //protected bool hasChanged;
         public bool HasChanged
         {
             get;
@@ -28,7 +28,7 @@ namespace CMGCO.Unity.CustomGUI.Base
 
         public void ResetHasChanged()
         {
-            this.hasChanged = false;
+            this.HasChanged = false;
         }
     }
 }

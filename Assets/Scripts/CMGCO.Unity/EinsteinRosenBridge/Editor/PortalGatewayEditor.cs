@@ -2,6 +2,8 @@ using UnityEditor;
 using UnityEngine;
 using CMGCO.Unity.CustomGUI.Base;
 
+using NUnit.Framework;
+
 namespace CMGCO.Unity.EinsteinRosenBridge
 {
     [ExecuteInEditMode]
@@ -20,7 +22,6 @@ namespace CMGCO.Unity.EinsteinRosenBridge
                 this.CheckPortalAssosiations();
             }
         }
-
         private void CheckPortalAssosiations()
         {
             // Need to check that we havn't become dissasiasiated from our DesitinationPortalGateway or we're connected to a portal we shouldn't be.
@@ -42,7 +43,6 @@ namespace CMGCO.Unity.EinsteinRosenBridge
                 this.editorTarget.ClearDestinationPortal();
             }
         }
-
         public override void OnInspectorGUI()
         {
             if (this.hasChanged || Event.current.commandName == "UndoRedoPerformed")
@@ -67,7 +67,6 @@ namespace CMGCO.Unity.EinsteinRosenBridge
                 this.drawPortalGatewayInput();
             }
         }
-
         private void ReadPropertiesFromSerializedObject()
         {
             PortalGateway serializedDestinationPortalGateway = (PortalGateway)serializedObject.FindProperty("destinationPortalGateway").objectReferenceValue;
@@ -82,12 +81,13 @@ namespace CMGCO.Unity.EinsteinRosenBridge
             if (newDestinationPortalGatewayResult.HasChanged)
             {
                 newDestinationPortalGatewayResult.ResetHasChanged();
-                if (PortalGatewayValidator.Validate(newDestinationPortalGatewayResult.ResultValue, editorTarget))
+                if (PortalGatewayValidator.Validate(newDestinationPortalGatewayResult.ResultValue, editorTarget, true))
                 {
                     this.destinationPortalGatewayResult = newDestinationPortalGatewayResult;
                     if (this.destinationPortalGatewayResult != null)
                     {
-                        this.setDestinationPortalGateway(newDestinationPortalGatewayResult.ResultValue);
+                        PortalGatewayPropSync.linkPortalGateways(this.editorTarget, newDestinationPortalGatewayResult.ResultValue);
+                        //this.setDestinationPortalGateway(newDestinationPortalGatewayResult.ResultValue);
                     }
                     else
                     {
@@ -97,10 +97,8 @@ namespace CMGCO.Unity.EinsteinRosenBridge
                 }
             }
         }
-
         private void setDestinationPortalGateway(PortalGateway newDestinationPortalGateway)
         {
-
             int group = Undo.GetCurrentGroup();
             string undoName = "Set Exit Portal";
             Undo.SetCurrentGroupName(undoName);
@@ -120,21 +118,18 @@ namespace CMGCO.Unity.EinsteinRosenBridge
             }
             Undo.RecordObjects(recordObject, undoName);
             this.editorTarget.DestinationPortalGateway = newDestinationPortalGateway;
-
-
             // If are new destination is linked then it will already have valid properties set.  
             if (newDestinationPortalGateway.DestinationPortalGateway == null
                 || EditorUtility.DisplayDialog("Inherit Properties from?", "Which Portal Gateway would you like to inherit the linked properties from?", "This Portal Gateway", "Destination Portal Gateway"))
             {
-                this.editorTarget.giveLinkedProperties();
+                this.editorTarget.PropagateSharedProperties();
             }
             else
             {
-                this.editorTarget.inheritLinkedProperties();
+                this.editorTarget.InheritSharedProperties();
             }
             Undo.CollapseUndoOperations(group);
         }
-
         private void clearDestinationPortalGateway()
         {
             if (this.editorTarget.DestinationPortalGateway == null)
@@ -148,8 +143,11 @@ namespace CMGCO.Unity.EinsteinRosenBridge
             Undo.SetCurrentGroupName(undoName);
             PortalGateway[] recordObject = new PortalGateway[] { this.editorTarget, this.editorTarget.DestinationPortalGateway };
             Undo.RecordObjects(recordObject, undoName);
-            this.editorTarget.clearExitPortal(true);
+            //this.editorTarget.ClearDestinationPortal(true);
+            this.editorTarget.ClearDestinationPortal();
             Undo.CollapseUndoOperations(group);
         }
     }
+
+
 }
