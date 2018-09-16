@@ -3,27 +3,27 @@ using UnityEngine;
 
 namespace CMGCO.Unity.CustomGUI.Base
 {
-    public class CustomGUIResult<T> where T : UnityEngine.Object
+    public class NewCustomGUIResult<ResultValueType>
     {
 
-        protected T resultValue;
-        public T ResultValue
+        protected ResultValueType resultValue;
+        public ResultValueType _resultValue
         {
             get;
             protected set;
         }
 
         protected bool hasChanged;
-        public bool HasChanged
+        public bool _hasChanged
         {
             get;
             protected set;
         }
 
-        public CustomGUIResult(T newResultValue = null, bool newHasChanged = false)
+        public NewCustomGUIResult(ResultValueType nResultValue, bool nHasChanged)
         {
-            this.HasChanged = newHasChanged;
-            this.ResultValue = newResultValue;
+            this._hasChanged = nHasChanged;
+            this._resultValue = nResultValue;
         }
 
         public void ResetHasChanged()

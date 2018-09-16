@@ -437,27 +437,28 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 825770145}
-  - component: {fileID: 825770144}
   - component: {fileID: 825770146}
+  - component: {fileID: 825770144}
   m_Layer: 0
-  m_Name: Linked Portal Gateway A
+  m_Name: Gateway A
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!65 &825770144
-BoxCollider:
+--- !u!114 &825770144
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 825770143}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72b5ab2d573507641b66ad52ee0fc897, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  testNumber: 20
+  destinationPortalGateway: {fileID: 0}
 --- !u!4 &825770145
 Transform:
   m_ObjectHideFlags: 0
@@ -471,29 +472,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &825770146
-MonoBehaviour:
+--- !u!65 &825770146
+BoxCollider:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 825770143}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8316ef4bfb4fc9f41966c37c5084b7c9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  exitPortal: {fileID: 1179685609}
-  exitPortalScript: {fileID: 1179685612}
-  screenRatio: {x: 1.33, y: 1}
-  screenSize:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
-  targetFOV: 60
-  transitionObjectsWhiltelist: []
-  isVisible: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!43 &936077575
 Mesh:
   m_ObjectHideFlags: 0
@@ -1099,7 +1089,7 @@ Mesh:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: pb_Mesh13784
+  m_Name: pb_Mesh13798
   serializedVersion: 8
   m_SubMeshes:
   - serializedVersion: 2
@@ -1410,9 +1400,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1179685611}
   - component: {fileID: 1179685610}
-  - component: {fileID: 1179685612}
+  - component: {fileID: 1179685613}
   m_Layer: 0
-  m_Name: Linked Portal Gateway B
+  m_Name: Gateway B
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1443,7 +1433,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1179685612
+--- !u!114 &1179685613
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
@@ -1451,22 +1441,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1179685609}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8316ef4bfb4fc9f41966c37c5084b7c9, type: 3}
+  m_Script: {fileID: 11500000, guid: 72b5ab2d573507641b66ad52ee0fc897, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exitPortal: {fileID: 825770143}
-  exitPortalScript: {fileID: 825770146}
-  screenRatio: {x: 1.33, y: 1}
-  screenSize:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
-  targetFOV: 60
-  transitionObjectsWhiltelist:
-  - {fileID: 1620494161}
-  isVisible: 0
+  testNumber: 30
+  destinationPortalGateway: {fileID: 0}
 --- !u!43 &1426374368
 Mesh:
   m_ObjectHideFlags: 0
@@ -1672,7 +1651,7 @@ GameObject:
   - component: {fileID: 1570490660}
   - component: {fileID: 1570490659}
   m_Layer: 0
-  m_Name: Linked Portal Gateway C
+  m_Name: Gateway C
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1893,7 +1872,7 @@ GameObject:
   - component: {fileID: 1758237281}
   - component: {fileID: 1758237280}
   m_Layer: 0
-  m_Name: Linked Portal Gateway D
+  m_Name: Gateway D
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

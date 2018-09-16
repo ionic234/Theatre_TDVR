@@ -11,41 +11,41 @@ namespace CMGCO.Unity.CustomGUI.Base
 
     [ExecuteInEditMode]
 
-    abstract public class CustomGUIBase<T>
-    //where T : CustomGUIResult<UnityEngine.Object> Causes issues for some reason.
+    abstract public class NewCustomGUIBase<CustomGUIResultType>
     {
+
 
         private MethodInfo MyDrawGUIControlBodyMethod;
 
         // If you recieve overload method missmatch remember you need to implemenmt an overloaded Method in your extending class that converts the given parmeters into an object array. 
-        public virtual T drawGUIControl(object[] args = null)
+        public virtual CustomGUIResultType drawGUIControl(object[] args = null)
         {
             if (this.MyDrawGUIControlBodyMethod == null)
             {
                 this.getMyDrawGUIControlBodyMethod();
             }
             this.drawGUIControlHead();
-            T rData;
+            CustomGUIResultType rData;
 
             try
             {
-                rData = (T)this.MyDrawGUIControlBodyMethod.Invoke(this, args != null ? args : new object[] { });
+                rData = (CustomGUIResultType)this.MyDrawGUIControlBodyMethod.Invoke(this, args != null ? args : new object[] { });
             }
-            // Default messages are not very helpful for finding the actual problem. 
+            // Default messages are not very helpful for finding the actualy problem. 
             catch (NullReferenceException)
             {
                 Debug.LogError(this.GetType().Name + " does not implement the required function [drawGUIControlBody] or arguments are wrong");
-                rData = default(T);
+                rData = default(CustomGUIResultType);
             }
             catch (TargetParameterCountException)
             {
                 Debug.LogError(this.GetType().Name + " function [drawGUIControlBody] recieved the wrong number of arguments");
-                rData = default(T);
+                rData = default(CustomGUIResultType);
             }
             catch (ArgumentException)
             {
                 Debug.LogError(this.GetType().Name + " function [drawGUIControlBody] recieved the wrong type of arguments");
-                rData = default(T);
+                rData = default(CustomGUIResultType);
             }
 
             this.drawGUIControlFooter();

@@ -1,6 +1,7 @@
-﻿using System;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
+
+
 
 namespace CMGCO.Unity.CustomGUI.Base
 {
@@ -8,31 +9,20 @@ namespace CMGCO.Unity.CustomGUI.Base
 
     public sealed class CustomEditorStyles
     {
-        // Thread safe singleton pattern. 
-        private static volatile CustomEditorStyles instance;
-        private static object syncRoot = new System.Object();
-
-        private CustomEditorStyles() { }
-
-        public static CustomEditorStyles Instance
+        private static readonly CustomEditorStyles instance = new CustomEditorStyles();
+        public static CustomEditorStyles _instance
         {
             get
             {
-                if (instance == null)
-                {
-                    lock (syncRoot)
-                    {
-                        if (instance == null)
-                            instance = new CustomEditorStyles();
-                    }
-                }
-
                 return instance;
             }
+
         }
 
+
+
         private GUIStyle error;
-        public GUIStyle Error
+        public GUIStyle _error
         {
             get
             {
@@ -47,7 +37,7 @@ namespace CMGCO.Unity.CustomGUI.Base
         }
 
         private GUIStyle rightAlign;
-        public GUIStyle RightAlign
+        public GUIStyle _rightAlign
         {
             get
             {
@@ -61,24 +51,29 @@ namespace CMGCO.Unity.CustomGUI.Base
                 return this.rightAlign;
             }
         }
-        private GUIStyle centerAlign;
-        public GUIStyle CenterAlign
+
+
+
+
+        private GUIStyle CenterAlign;
+        public GUIStyle _centerAlign
         {
             get
             {
-                if (this.centerAlign == null)
+                if (this.CenterAlign == null)
                 {
-                    this.centerAlign = new GUIStyle();
-                    this.centerAlign.alignment = TextAnchor.UpperCenter;
-                    this.centerAlign.padding.top = 1;
-                    this.centerAlign.clipping = TextClipping.Clip;
+                    this.CenterAlign = new GUIStyle();
+                    this.CenterAlign.alignment = TextAnchor.UpperCenter;
+                    this.CenterAlign.padding.top = 1;
+                    this.CenterAlign.clipping = TextClipping.Clip;
                 }
-                return this.centerAlign;
+                return this.CenterAlign;
             }
         }
 
+
         private GUIStyle bold;
-        public GUIStyle Bold
+        public GUIStyle _bold
         {
             get
             {
@@ -95,7 +90,7 @@ namespace CMGCO.Unity.CustomGUI.Base
         }
 
         private GUIStyle boldCenterAlign;
-        public GUIStyle BoldCenterAlign
+        public GUIStyle _boldCenterAlign
         {
             get
             {
@@ -112,11 +107,14 @@ namespace CMGCO.Unity.CustomGUI.Base
         }
 
 
-        // Styles for use with AnchoredWidthHeight
-        // TODO: Split these into own editor styles class. 
 
+
+
+
+
+        // Styles for use with AnchoredWidthHeight
         private GUIStyle anchoredWidthHeightLabelFix;
-        public GUIStyle AnchoredWidthHeightLabelFix
+        public GUIStyle _anchoredWidthHeightLabelFix
         {
             get
             {
@@ -131,7 +129,7 @@ namespace CMGCO.Unity.CustomGUI.Base
         }
 
         private GUIStyle anchoredWidthHeightFocus;
-        public GUIStyle AnchoredWidthHeightFocus
+        public GUIStyle _anchoredWidthHeightFocus
         {
             get
             {
@@ -148,7 +146,7 @@ namespace CMGCO.Unity.CustomGUI.Base
         }
 
         private GUIStyle anchoredWidthHeightFocusFix;
-        public GUIStyle AnchoredWidthHeightFocusFix
+        public GUIStyle _anchoredWidthHeightFocusFix
         {
             get
             {
@@ -164,7 +162,7 @@ namespace CMGCO.Unity.CustomGUI.Base
         }
 
         private GUIStyle anchordWidthHeightAnchored;
-        public GUIStyle AnchordWidthHeightAnchored
+        public GUIStyle _anchordWidthHeightAnchored
         {
             get
             {
@@ -180,7 +178,7 @@ namespace CMGCO.Unity.CustomGUI.Base
         }
 
         private GUIStyle anchoredWidhtHeightAnchoredFix;
-        public GUIStyle AnchordWidthHeightAnchoredFix
+        public GUIStyle _anchordWidthHeightAnchoredFix
         {
             get
             {
@@ -196,7 +194,7 @@ namespace CMGCO.Unity.CustomGUI.Base
         }
 
         private GUIStyle anchoredWidthHeightFocusAnchored;
-        public GUIStyle AnchoredWidthHeightFocusAnchored
+        public GUIStyle _anchoredWidthHeightFocusAnchored
         {
             get
             {
@@ -213,7 +211,7 @@ namespace CMGCO.Unity.CustomGUI.Base
         }
 
         private GUIStyle anchoredWidthHeightFocusAnchoredFix;
-        public GUIStyle AnchoredWidthHeightFocusAnchoredFix
+        public GUIStyle _anchoredWidthHeightFocusAnchoredFix
         {
             get
             {
