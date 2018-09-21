@@ -36,10 +36,8 @@ namespace CMGCO.Unity.EinsteinRosenBridge
             {
                 if (this.destinationPortalGateway != null)
                 {
-                    // Clear the old destination portal. 
                     this.destinationPortalGateway.ClearDestinationPortal();
                 }
-
                 this.destinationPortalGateway = newDestinationPortalGateway;
                 if (isPropigate)
                 {
@@ -51,17 +49,24 @@ namespace CMGCO.Unity.EinsteinRosenBridge
 
         public void PropagateSharedProperties()
         {
-            Debug.Log("PropagateSharedProperties");
+            //Debug.Log("PropagateSharedProperties");
         }
 
         public void InheritSharedProperties()
         {
-            Debug.Log("InheritSharedProperties");
+
+            //Debug.Log("InheritSharedProperties");
         }
 
-        public void ClearDestinationPortal()
+        public void ClearDestinationPortal(bool isPropigate = false)
         {
-            Debug.Log("ClearDestinationPortal");
+            // todo: Reset vars to default, is this manditory. 
+            if (isPropigate)
+            {
+                this.destinationPortalGateway.ClearDestinationPortal();
+            }
+            this.destinationPortalGateway = null;
+
         }
     }
 }

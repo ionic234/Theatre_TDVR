@@ -30,8 +30,7 @@ public class PortalGatewayValidatorTests
     [Test]
     public void ValidateNotSelfFailsCorrectly()
     {
-        // Use the Assert class to test conditions.
         Assert.That(PortalGatewayValidator.Validate(gatewayA, gatewayA), Is.False, "validateNotSelf: Portal Gateway Validator returns false if both portals are the same");
-    }
 
+    }
 }

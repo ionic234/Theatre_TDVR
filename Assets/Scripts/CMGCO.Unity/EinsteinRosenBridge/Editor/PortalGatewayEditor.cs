@@ -84,70 +84,18 @@ namespace CMGCO.Unity.EinsteinRosenBridge
                 if (PortalGatewayValidator.Validate(newDestinationPortalGatewayResult.ResultValue, editorTarget, true))
                 {
                     this.destinationPortalGatewayResult = newDestinationPortalGatewayResult;
-                    if (this.destinationPortalGatewayResult != null)
+                    if (this.destinationPortalGatewayResult.ResultValue != null)
                     {
-                        PortalGatewayPropSync.linkPortalGateways(this.editorTarget, newDestinationPortalGatewayResult.ResultValue);
-                        //this.setDestinationPortalGateway(newDestinationPortalGatewayResult.ResultValue);
+                        PortalGatewayPropSync.LinkPortalGateways(this.editorTarget, newDestinationPortalGatewayResult.ResultValue);
                     }
                     else
                     {
-                        this.clearDestinationPortalGateway();
+                        PortalGatewayPropSync.deleteDestinationPortalGateway(this.editorTarget);
                     }
                     this.hasChanged = true;
                 }
             }
         }
-        private void setDestinationPortalGateway(PortalGateway newDestinationPortalGateway)
-        {
-            int group = Undo.GetCurrentGroup();
-            string undoName = "Set Exit Portal";
-            Undo.SetCurrentGroupName(undoName);
-            PortalGateway[] recordObject;
-            // Need to do some tests to work out what goes in the array 
-            if (this.editorTarget.DestinationPortalGateway == null)
-            {
-                recordObject = newDestinationPortalGateway.DestinationPortalGateway == null ?
-                    new PortalGateway[] { this.editorTarget, newDestinationPortalGateway } :
-                    new PortalGateway[] { this.editorTarget, newDestinationPortalGateway, newDestinationPortalGateway.DestinationPortalGateway };
-            }
-            else
-            {
-                recordObject = newDestinationPortalGateway.DestinationPortalGateway == null ?
-                    new PortalGateway[] { this.editorTarget, this.editorTarget.DestinationPortalGateway, newDestinationPortalGateway } :
-                    new PortalGateway[] { this.editorTarget, this.editorTarget.DestinationPortalGateway, newDestinationPortalGateway, newDestinationPortalGateway.DestinationPortalGateway };
-            }
-            Undo.RecordObjects(recordObject, undoName);
-            this.editorTarget.DestinationPortalGateway = newDestinationPortalGateway;
-            // If are new destination is linked then it will already have valid properties set.  
-            if (newDestinationPortalGateway.DestinationPortalGateway == null
-                || EditorUtility.DisplayDialog("Inherit Properties from?", "Which Portal Gateway would you like to inherit the linked properties from?", "This Portal Gateway", "Destination Portal Gateway"))
-            {
-                this.editorTarget.PropagateSharedProperties();
-            }
-            else
-            {
-                this.editorTarget.InheritSharedProperties();
-            }
-            Undo.CollapseUndoOperations(group);
-        }
-        private void clearDestinationPortalGateway()
-        {
-            if (this.editorTarget.DestinationPortalGateway == null)
-            {
-                Debug.Log("Nothing changed here so do nothing");
-                return;
-            }
-
-            int group = Undo.GetCurrentGroup();
-            string undoName = "Clear Exit Portal";
-            Undo.SetCurrentGroupName(undoName);
-            PortalGateway[] recordObject = new PortalGateway[] { this.editorTarget, this.editorTarget.DestinationPortalGateway };
-            Undo.RecordObjects(recordObject, undoName);
-            //this.editorTarget.ClearDestinationPortal(true);
-            this.editorTarget.ClearDestinationPortal();
-            Undo.CollapseUndoOperations(group);
-        }
     }
-
 
 }

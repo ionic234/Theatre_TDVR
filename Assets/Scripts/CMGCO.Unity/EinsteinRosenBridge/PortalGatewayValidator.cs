@@ -9,6 +9,11 @@ namespace CMGCO.Unity.EinsteinRosenBridge
     {
         static public bool Validate(PortalGateway gatewayToValidate, PortalGateway targetGateway, bool showErrorDialog = false)
         {
+            if (!validateNotAlreadySet(gatewayToValidate, targetGateway))
+            {
+                return false;
+            }
+
             if (!validateNotSelf(gatewayToValidate, targetGateway))
             {
 #if UNITY_EDITOR
@@ -19,15 +24,16 @@ namespace CMGCO.Unity.EinsteinRosenBridge
 #endif
                 return false;
             }
-            else
-            {
-                return true;
-            }
+            return true;
+        }
+
+        static private bool validateNotAlreadySet(PortalGateway gatewayToValidate, PortalGateway targetGateway)
+        {
+            return targetGateway.DestinationPortalGateway != gatewayToValidate;
         }
 
         static private bool validateNotSelf(PortalGateway gatewayToValidate, PortalGateway targetGateway)
         {
-            // Both can be null so use !=
             return targetGateway != gatewayToValidate;
         }
     }
